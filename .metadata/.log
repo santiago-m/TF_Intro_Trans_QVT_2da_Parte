@@ -1,0 +1,6 @@
+
+!ENTRY org.eclipse.acceleo.common 2 0 2018-11-16 02:10:04.029
+!MESSAGE Couldn't load class Transformacion_TF.main.Generate_sql. Check that its containing package is exported.
+
+!ENTRY org.eclipse.acceleo.ide.ui 4 0 2018-11-16 02:10:04.113
+!MESSAGE Couldn't load class Transformacion_TF.main.Generate_sql from project Transformacion_TF

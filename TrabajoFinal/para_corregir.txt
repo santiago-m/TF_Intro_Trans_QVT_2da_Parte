@@ -1,0 +1,6 @@
+TENGO QUE
+	ELIMINAR RELACION REDUNDANTE Entity-Entity (General - General_Opposite)
+	ELIMINAR RELACION RENDUNDANTE Entity-Key Key-Entity
+	OCL_Clausura para que:
+		Si A -> father = B
+		Se debe cumplir que B -> father != A

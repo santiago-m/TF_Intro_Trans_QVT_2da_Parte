@@ -1,0 +1,7 @@
+[comment encoding = UTF-8 /]
+[module generate_sql('SimpleRDBMS')]
+
+
+[template public generateElement(aSchema : Schema)]
+[comment @main/]
+[/template]

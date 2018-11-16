@@ -1,0 +1,28 @@
+[comment encoding = UTF-8 /]
+[module generate_sql('SimpleRDBMS')]
+
+
+[template public generateElement(aSchema : Schema)]
+[comment @main/]
+[file (aSchema.name + '.sql', false, 'UTF-8')]
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ [aSchema.name/];
+USE [aSchema.name/];
+[for (table : Table | aSchema.tables) separator('\n')]
+[generateTable(aSchema, table)/]
+[/for]
+[/file]
+[/template]
+
+[template public generateTable(aSchema : Schema, aTable : Table)]
+DROP TABLE IF EXISTS `[aTable.name/]`;
+CREATE TABLE `[aTable.name/]` (
+[for (column : Column | aTable.columns) separator('')]
+	[generateColumn(aTable, column)/]	
+[/for]
+PRIMARY KEY ([for (column : Column | aTable.primary_key.columns) separator(', ')]`[column.name/]`[/for])
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+[/template]
+
+[template public generateColumn(aTable : Table, aColumn : Column)]
+`[aColumn.name/]` [if (aColumn.type = 'Integer')]int(25)[else][if (aColumn.type = 'String')]varchar(25)[else][if (aColumn.type = 'Double')]decimal(10, 2)[else][if (aColumn.type = 'DateTime')]Date[/if][/if][/if][/if],
+[/template]
