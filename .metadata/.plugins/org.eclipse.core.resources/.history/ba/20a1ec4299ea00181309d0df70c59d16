@@ -59,11 +59,11 @@ mapping ERM::Entity::persistentEntityToTable() : RDB::Table
 		let foreign_columns : Sequence(RDB::Column) = dependencie_tables 
 			-> collect(t : RDB::Table | t.primary_key.columns) 
 			-> asSequence() 
-			-> map create_derived_columns(self.name, false) 
+			-> map create_derived_columns(self.name) 
 		in do {
 			columns := self.attributes 
 				-> select(a : ERM::Attribute | not a.oclIsKindOf(ERM::Multival_attribute))
-				-> map attributeToColumn('') 
+				-> map attributeToColumn() 
 				-> sortedBy(name) 
 				-> union(
 					foreign_columns
@@ -99,33 +99,6 @@ mapping ERM::Entity::persistentEntityToTable() : RDB::Table
 						primary_key := new_pk;
 					};
 				};
-			};
-			let recursive_relations : Set(ERM::Relation) = self.recursive_relations()
-			in do {
-				if (recursive_relations -> notEmpty()) {
-					columns := columns -> union (
-												recursive_relations -> 
-												map recursive_relation_to_column()
-												-> flatten()
-											)
-				}
-			};
-			let recursive_columns : Set(RDB::Column) = self.relation_attributes()
-							-> map attributeToColumn('')
-							-> flatten()
-			in do {
-				columns := columns 
-						-> union (
-							recursive_columns
-						);
-				let fk : RDB::ForeignKey = recursive_columns -> map columnToForeignKey(self)
-				in do {
-					fk.refersTo := primary_key;
-					foreignKeys := foreignKeys
-							-> including(
-								fk
-							)
-				}
 			}
 		};
 		schema := self.resolveoneIn(ERM::Package::packageToSchema,RDB::Schema);
@@ -146,15 +119,11 @@ mapping ERM::Relation::relation_n_to_n_ToTable() : RDB::Table
 				-> select(t : RDB::Table | t.name = self.entity_2.name) 
 				-> any(true)
 		in do {
-			let foreign_columns : Sequence(RDB::Column) = t1.primary_key.columns
-								-> map create_derived_columns(self.name, false)
-								-> asBag()
-								-> union(
-									t2.primary_key.columns
-									-> map create_derived_columns(self.name, t1 = t2)
-									->asBag()
-								)  
-								 
+			let foreign_columns : Sequence(RDB::Column) = t1.oclAsSet() 
+								-> including(t2) 
+								-> collect(t : RDB::Table | t.primary_key.columns) 
+								-> asSequence() 
+								-> map create_derived_columns(self.name) 
 			in do {
 				keys := foreign_columns -> map create_pk_with_columns();
 				primary_key := keys 
@@ -162,7 +131,7 @@ mapping ERM::Relation::relation_n_to_n_ToTable() : RDB::Table
 								-> any(true);
 				primary_key.name := 'pk_' + self.name;
 				columns := self.attributes 
-							-> map attributeToColumn('') 
+							-> map attributeToColumn() 
 							-> sortedBy(name) 
 							-> union(
 								foreign_columns
@@ -219,34 +188,29 @@ mapping ERM::Attribute::mattributeToColumn(owner_name : String) : RDB::Column {
  * This mappings produces a RDB Key/Primary_Key object from an ERModel Key/Primary_Key object.
 */
 mapping ERM::Key::entityKeyToTableKey() : RDB::Key {
-		columns := self.attribute_set -> map attributeToColumn('');
+		columns := self.attribute_set -> map attributeToColumn();
 }
 
 mapping ERM::Primary_Key::entityPKToTablePK() : RDB::Primary_Key {
 	name := 'pk_'+self.pk_owner.name;
 	kind := 'primary_key';
-	columns := self.attribute_set -> map attributeToColumn('');
+	columns := self.attribute_set -> map attributeToColumn();
 }
 
 /*
  * This mapping produces a copy of an RDB Column object changing its name
  * Used for foreign keys columns
 */
-mapping RDB::Column::create_derived_columns(owner_name : String, duplicate_columns : Boolean) : RDB::Column {
-	if (duplicate_columns) { 
-		name := self.name + '2_' + owner_name;
-	}
-	else {
-		name := self.name + '_' + owner_name;
-	};
+mapping RDB::Column::create_derived_columns(owner_name : String) : RDB::Column {
+	name := self.name + '_' + owner_name;
 	type := self.type;
 }
 
 /*
  * This mapping produces an RDB Column object from an ERModel Attribute object.
 */
-mapping ERM::Attribute::attributeToColumn(suffix : String) : RDB::Column {
-	name := self.name + suffix;
+mapping ERM::Attribute::attributeToColumn() : RDB::Column {
+	name := self.name;
 	kind := self.kind;
 	type := self.type.name;
 }
@@ -261,25 +225,12 @@ mapping ERM::Attribute::derivedAttributeToColumn(new_owner_name : String) : RDB:
 	type := self.type.name;
 }
 
-mapping Set(RDB::Column)::columnToForeignKey(owner_entity : ERM::Entity) : RDB::ForeignKey {
-	name := 'fk_recursive_' + owner_entity.name;
-	columns := self;
-}
-
 /*
  * This mapping produces an RDB ForeignKey object from an RDB Table object.
 */
 mapping RDB::Table::foreignKeyFromTable(owner_name : String, cols : Sequence(RDB::Column)) : RDB::ForeignKey {
 		name := 'fk_' + self.name + '_' + owner_name;
-		columns := cols -> select(c1 : RDB::Column | 
-									self.columns 
-										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('_' + owner_name)) 
-											or
-									self.columns 
-										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('2_' + owner_name))
-								);
+		columns := cols -> select(c1 : RDB::Column | self.columns -> collect(c2 : RDB::Column | c2.name) -> includes(c1.name.substringBefore('_' + owner_name)));
 		refersTo := self.primary_key;
 }
 
@@ -305,33 +256,6 @@ mapping Set(RDB::Column)::pk_from_derived_columns(new_owner_name : String) : RDB
 */
 mapping Sequence(RDB::Column)::create_pk_with_columns() : RDB::Primary_Key {
 	columns := self;
-}
-
-query ERM::Entity::relation_attributes() : Set(ERM::Attribute) {
-	let one_to_N_relations : Set(ERM::Relation) = Relation.allInstances()
-													-> select(r : ERM::Relation | not r.is_n_to_n())
-	in  
-	return 
-		one_to_N_relations 
-		-> select(r : ERM::Relation | 
-					r.entity_1 = self and r.cardinality_2 = '1' or
-					r.entity_2 = self and r.cardinality_1 = '1')
-		-> collect(r : ERM::Relation | r.attributes)
-		-> asSet();
-	return null.oclAsSet();
-}
-
-query ERM::Relation::recursive_relation_to_column() : Set(RDB::Column) {
-	return self.entity_1.primary_key.attribute_set 
-				-> map attributeToColumn('_' + self.name)
-				-> union(
-					self.attributes -> attributeToColumn('_' + self.name)
-				)
-				-> asSet()
-}
-
-query ERM::Entity::recursive_relations() : Set(ERM::Relation) {
-	return ERM::Relation.allInstances() -> select(r : ERM::Relation | r.entity_1 = self and r.entity_2 = self and (r.cardinality_1 = '1' or r.cardinality_2 = '1'));
 }
 
 query Set(ERM::Entity)::sons() : Set(ERM::Entity) {

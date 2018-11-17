@@ -118,14 +118,10 @@ mapping ERM::Entity::persistentEntityToTable() : RDB::Table
 						-> union (
 							recursive_columns
 						);
-				let fk : RDB::ForeignKey = recursive_columns -> map columnToForeignKey(self)
-				in do {
-					fk.refersTo := primary_key;
-					foreignKeys := foreignKeys
-							-> including(
-								fk
+				foreignKeys := foreignKeys
+							-> union(
+								recursive_columns -> map columnToForeignKey(self)
 							)
-				}
 			}
 		};
 		schema := self.resolveoneIn(ERM::Package::packageToSchema,RDB::Schema);
@@ -271,15 +267,7 @@ mapping Set(RDB::Column)::columnToForeignKey(owner_entity : ERM::Entity) : RDB::
 */
 mapping RDB::Table::foreignKeyFromTable(owner_name : String, cols : Sequence(RDB::Column)) : RDB::ForeignKey {
 		name := 'fk_' + self.name + '_' + owner_name;
-		columns := cols -> select(c1 : RDB::Column | 
-									self.columns 
-										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('_' + owner_name)) 
-											or
-									self.columns 
-										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('2_' + owner_name))
-								);
+		columns := cols -> select(c1 : RDB::Column | self.columns -> collect(c2 : RDB::Column | c2.name) -> includes(c1.name.substringBefore('_' + owner_name)));
 		refersTo := self.primary_key;
 }
 

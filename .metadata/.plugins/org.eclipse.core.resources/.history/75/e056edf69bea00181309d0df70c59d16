@@ -41,5 +41,4 @@
   <elements xsi:type="ermodel:Relation" name="Father" entity_1="//@elements.1" entity_2="//@elements.1" cardinality_1="N" cardinality_2="1">
     <attributes name="at" type="//@elements.8"/>
   </elements>
-  <elements xsi:type="ermodel:Relation" name="Father2" entity_1="//@elements.2" entity_2="//@elements.2" cardinality_1="N" cardinality_2="N"/>
 </ermodel:Package>
