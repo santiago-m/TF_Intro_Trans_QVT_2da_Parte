@@ -62,6 +62,7 @@ mapping ERM::Entity::persistentEntityToTable() : RDB::Table
 			-> map create_derived_columns(self.name) 
 		in do {
 			columns := self.attributes 
+				-> select(a : ERM::Attribute | not a.oclIsKindOf(ERM::Multival_attribute))
 				-> map attributeToColumn() 
 				-> sortedBy(name) 
 				-> union(
@@ -71,6 +72,7 @@ mapping ERM::Entity::persistentEntityToTable() : RDB::Table
 				-> map foreignKeyFromTable(self.name, foreign_columns);
 			if (not self.parent.existTable(dependencie_tables)) {
 				let derived_columns : Set(RDB::Column) = self.get_untabulated_parents_attributes() 
+					-> select(a : ERM::Attribute | not a.oclIsKindOf(ERM::Multival_attribute))
 					-> derivedAttributeToColumn(self.name) 
 				in do {
 					columns := derived_columns
@@ -127,6 +129,7 @@ mapping ERM::Relation::relation_n_to_n_ToTable() : RDB::Table
 				primary_key := keys 
 								-> selectByKind(RDB::Primary_Key) 
 								-> any(true);
+				primary_key.name := 'pk_' + self.name;
 				columns := self.attributes 
 							-> map attributeToColumn() 
 							-> sortedBy(name) 
@@ -176,7 +179,7 @@ mapping ERM::Attribute::mattributeToColumn(owner_name : String) : RDB::Column {
 	if (self.oclIsKindOf(ERM::Multival_attribute)) then
 		name := self.name + '_' + owner_name
 	else
-		name := 'fk_' + self.name + '_' + owner_name
+		name := self.name + '_' + owner_name
 	endif;
 	type := self.type.name;
 }
@@ -199,7 +202,7 @@ mapping ERM::Primary_Key::entityPKToTablePK() : RDB::Primary_Key {
  * Used for foreign keys columns
 */
 mapping RDB::Column::create_derived_columns(owner_name : String) : RDB::Column {
-	name := 'fk_' + self.name + '_' + owner_name;
+	name := self.name + '_' + owner_name;
 	type := self.type;
 }
 
@@ -227,7 +230,7 @@ mapping ERM::Attribute::derivedAttributeToColumn(new_owner_name : String) : RDB:
 */
 mapping RDB::Table::foreignKeyFromTable(owner_name : String, cols : Sequence(RDB::Column)) : RDB::ForeignKey {
 		name := 'fk_' + self.name + '_' + owner_name;
-		columns := cols -> select(c1 : RDB::Column | self.columns -> collect(c2 : RDB::Column | 'fk_' + c2.name) -> includes(c1.name.substringBefore('_' + owner_name)));
+		columns := cols -> select(c1 : RDB::Column | self.columns -> collect(c2 : RDB::Column | c2.name) -> includes(c1.name.substringBefore('_' + owner_name)));
 		refersTo := self.primary_key;
 }
 
@@ -323,7 +326,8 @@ query ERM::Entity::dependencies() : Set(Entity) {
 	let allRelations : Set(ERM::Relation) = ERM::Relation.allInstances() in
 		return allRelations -> select (r : ERM::Relation | (r.entity_1 = self and r.cardinality_1 = 'N' and r.cardinality_2 = '1')) -> collect(r : ERM::Relation | r.entity_2) 
 						-> union(allRelations -> select (r : ERM::Relation | (r.entity_2 = self and r.cardinality_2 = 'N' and r.cardinality_1 = '1')) -> collect(r : ERM::Relation | r.entity_1)) -> asSet()
-						-> union(self.parent.oclAsSet());
+						-> union(self.parent.oclAsSet())
+						-> excluding(self);
 	return null;
 }
 

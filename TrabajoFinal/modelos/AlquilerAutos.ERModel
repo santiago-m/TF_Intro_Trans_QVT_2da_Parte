@@ -34,8 +34,11 @@
     <attributes name="attr1" type="//@elements.8"/>
     <attributes name="attr2" type="//@elements.8"/>
   </elements>
-  <elements xsi:type="ermodel:PrimitiveDataType" name="String" typeOpposite="//@elements.5/@attributes.0 //@elements.4/@attributes.0 //@elements.7/@attributes.0 //@elements.7/@attributes.1 //@elements.1/@attributes.0 //@elements.1/@attributes.1 //@elements.1/@attributes.2 //@elements.4/@attributes.2 //@elements.0/@attributes.2"/>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="String" typeOpposite="//@elements.5/@attributes.0 //@elements.4/@attributes.0 //@elements.7/@attributes.0 //@elements.7/@attributes.1 //@elements.1/@attributes.0 //@elements.1/@attributes.1 //@elements.1/@attributes.2 //@elements.4/@attributes.2 //@elements.0/@attributes.2 //@elements.12/@attributes.0"/>
   <elements xsi:type="ermodel:PrimitiveDataType" name="Double" typeOpposite="//@elements.4/@attributes.1 //@elements.5/@attributes.2 //@elements.5/@attributes.3 //@elements.0/@attributes.1 //@elements.0/@attributes.0"/>
   <elements xsi:type="ermodel:PrimitiveDataType" name="Integer" typeOpposite="//@elements.4/@attributes.3 //@elements.3/@attributes.0"/>
   <elements xsi:type="ermodel:PrimitiveDataType" name="Date" typeOpposite="//@elements.5/@attributes.1"/>
+  <elements xsi:type="ermodel:Relation" name="Father" entity_1="//@elements.1" entity_2="//@elements.1" cardinality_1="N" cardinality_2="1">
+    <attributes name="at" type="//@elements.8"/>
+  </elements>
 </ermodel:Package>

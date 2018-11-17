@@ -54,6 +54,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//Entity"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="keys" upperBound="-1" eType="#//Key"
         containment="true" eOpposite="#//Key/k_owner"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sons_has_intersection"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Key" eSuperTypes="#//ERMElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
