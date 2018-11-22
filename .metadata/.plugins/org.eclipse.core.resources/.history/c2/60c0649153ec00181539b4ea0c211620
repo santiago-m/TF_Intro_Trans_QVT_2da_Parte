@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:simplerdbms="SimpleRDBMS" xsi:schemaLocation="SimpleRDBMS ../metamodelos/SimpleRDBMS.ecore">
+  <simplerdbms:Schema name="rent_a_car">
+    <tables name="Mprice_scale_Rent" primary_key="/0/@tables.0/@keys.0">
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Mprice_scale_Rent" pk_owner="/0/@tables.0"/>
+      <foreignKeys name="fk_Rent2_Mprice_scale_Rent"/>
+    </tables>
+    <tables name="Client" primary_key="/0/@tables.1/@keys.0">
+      <columns name="address_Client" type="String"/>
+      <columns name="document_Client" type="String" keys="/0/@tables.1/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Client" kind="primary_key" columns="/0/@tables.1/@columns.1" pk_owner="/0/@tables.1"/>
+    </tables>
+    <tables name="Mphones_Partner">
+      <foreignKeys name="fk_Partner2_Mphones_Partner" refersTo="/0/@tables.5/@keys.0"/>
+    </tables>
+    <tables name="Rent">
+      <columns name="date" type="Date"/>
+      <columns name="patent_Rent" type="String" foreignKeys="/0/@tables.3/@foreignKeys.0"/>
+      <columns name="kilometers_done" type="Double"/>
+      <columns name="paid_amount" type="Double"/>
+      <columns name="document_Client_Rent" type="String" foreignKeys="/0/@tables.3/@foreignKeys.1"/>
+      <columns name="price_by_kilometer" type="Double"/>
+      <columns name="rent_code" type="String"/>
+      <foreignKeys name="fk_Vehicle_Rent" refersTo="/0/@tables.6/@keys.0" columns="/0/@tables.3/@columns.1"/>
+      <foreignKeys name="fk_Client_Rent" refersTo="/0/@tables.1/@keys.0" columns="/0/@tables.3/@columns.4"/>
+    </tables>
+    <tables name="Mphones_Client">
+      <foreignKeys name="fk_Client2_Mphones_Client" refersTo="/0/@tables.1/@keys.0"/>
+    </tables>
+    <tables name="Partner" primary_key="/0/@tables.5/@keys.0">
+      <columns name="document_Partner" type="String" keys="/0/@tables.5/@keys.0"/>
+      <columns name="car_quantity" type="Integer"/>
+      <columns name="address_Partner" type="String"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Partner" kind="primary_key" columns="/0/@tables.5/@columns.0" pk_owner="/0/@tables.5"/>
+    </tables>
+    <tables name="Vehicle" primary_key="/0/@tables.6/@keys.0">
+      <columns name="kilometers" type="Double"/>
+      <columns name="brand" type="String"/>
+      <columns name="patent" type="String" keys="/0/@tables.6/@keys.0"/>
+      <columns name="model" type="Integer"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Vehicle" kind="primary_key" columns="/0/@tables.6/@columns.2" pk_owner="/0/@tables.6"/>
+    </tables>
+  </simplerdbms:Schema>
+  <simplerdbms:Column name="phones_Mphones_Client" type="String"/>
+  <simplerdbms:Column name="phones_Mphones_Partner" type="String"/>
+  <simplerdbms:Column name="price_scale_Mprice_scale_Rent" type="String"/>
+</xmi:XMI>

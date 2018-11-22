@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ermodel:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ermodel="ERModel" xsi:schemaLocation="ERModel ../metamodelos/ERModel.ecore" name="complete_example">
+  <elements xsi:type="ermodel:Entity" name="Persona_Parent" primary_key="//@elements.0/@keys.0">
+    <attributes name="attribute_1" type="//@elements.9"/>
+    <attributes name="attribute_2" type="//@elements.9"/>
+    <attributes xsi:type="ermodel:Multival_attribute" name="multival_attr" type="//@elements.8"/>
+    <keys xsi:type="ermodel:Primary_Key" name="pk_PERSON_PARENTE" attribute_set="//@elements.0/@attributes.0" pk_owner="//@elements.0"/>
+  </elements>
+  <elements xsi:type="ermodel:Entity" name="Person" primary_key="//@elements.1/@keys.0" parent="//@elements.0">
+    <attributes name="document" type="//@elements.8"/>
+    <attributes name="address" type="//@elements.8"/>
+    <attributes xsi:type="ermodel:Multival_attribute" name="phones" type="//@elements.8"/>
+    <keys xsi:type="ermodel:Primary_Key" name="pk_persona" attribute_set="//@elements.1/@attributes.0" pk_owner="//@elements.1"/>
+  </elements>
+  <elements xsi:type="ermodel:Entity" name="Client" parent="//@elements.1"/>
+  <elements xsi:type="ermodel:Entity" name="Partner" parent="//@elements.1">
+    <attributes name="car_quantity" type="//@elements.10"/>
+  </elements>
+  <elements xsi:type="ermodel:Entity" name="Vehicle" primary_key="//@elements.4/@keys.0">
+    <attributes name="patent" type="//@elements.8"/>
+    <attributes name="kilometers" type="//@elements.9"/>
+    <attributes name="brand" type="//@elements.8"/>
+    <attributes name="model" type="//@elements.10"/>
+    <keys xsi:type="ermodel:Primary_Key" name="vehiculo_pk" attribute_set="//@elements.4/@attributes.0" pk_owner="//@elements.4"/>
+  </elements>
+  <elements xsi:type="ermodel:Relation" name="Alquila" entity_1="//@elements.2" entity_2="//@elements.4" cardinality_1="1" cardinality_2="N">
+    <attributes name="code" type="//@elements.8"/>
+    <attributes name="date" type="//@elements.11"/>
+    <attributes name="kilometers_done" type="//@elements.9"/>
+    <attributes name="paid_amount" type="//@elements.9"/>
+  </elements>
+  <elements xsi:type="ermodel:Relation" name="Car_Owner" entity_1="//@elements.3" entity_2="//@elements.4" cardinality_1="1" cardinality_2="N"/>
+  <elements xsi:type="ermodel:Relation" name="relacion_nn" entity_1="//@elements.1" entity_2="//@elements.4" cardinality_1="N" cardinality_2="N">
+    <attributes name="attr1" type="//@elements.8"/>
+    <attributes name="attr2" type="//@elements.8"/>
+  </elements>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="String" typeOpposite="//@elements.5/@attributes.0 //@elements.4/@attributes.0 //@elements.7/@attributes.0 //@elements.7/@attributes.1 //@elements.1/@attributes.0 //@elements.1/@attributes.1 //@elements.1/@attributes.2 //@elements.4/@attributes.2 //@elements.0/@attributes.2 //@elements.12/@attributes.0"/>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="Double" typeOpposite="//@elements.4/@attributes.1 //@elements.5/@attributes.2 //@elements.5/@attributes.3 //@elements.0/@attributes.1 //@elements.0/@attributes.0"/>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="Integer" typeOpposite="//@elements.4/@attributes.3 //@elements.3/@attributes.0"/>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="Date" typeOpposite="//@elements.5/@attributes.1"/>
+  <elements xsi:type="ermodel:Relation" name="Father" entity_1="//@elements.1" entity_2="//@elements.1" cardinality_1="N" cardinality_2="1">
+    <attributes name="att" type="//@elements.8"/>
+  </elements>
+  <elements xsi:type="ermodel:Relation" name="Father2" entity_1="//@elements.2" entity_2="//@elements.2" cardinality_1="N" cardinality_2="N"/>
+</ermodel:Package>

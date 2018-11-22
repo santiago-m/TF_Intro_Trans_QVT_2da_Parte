@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:simplerdbms="SimpleRDBMS" xsi:schemaLocation="SimpleRDBMS ../metamodelos/SimpleRDBMS.ecore">
+  <simplerdbms:Schema name="alquiler_autos">
+    <tables name="Vehicle" primary_key="/0/@tables.0/@keys.0">
+      <columns name="document_Client_Vehicle" type="String" foreignKeys="/0/@tables.0/@foreignKeys.0"/>
+      <columns name="paid_amount" type="Double" foreignKeys="/0/@tables.0/@foreignKeys.2"/>
+      <columns name="date" type="Date" foreignKeys="/0/@tables.0/@foreignKeys.2"/>
+      <columns name="code" type="String" foreignKeys="/0/@tables.0/@foreignKeys.2"/>
+      <columns name="kilometers_done" type="Double" foreignKeys="/0/@tables.0/@foreignKeys.2"/>
+      <columns name="kilometers" type="Double"/>
+      <columns name="model" type="Integer"/>
+      <columns name="document_Partner_Vehicle" type="String" foreignKeys="/0/@tables.0/@foreignKeys.1"/>
+      <columns name="brand" type="String"/>
+      <columns name="patent" type="String" keys="/0/@tables.0/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Vehicle" kind="primary_key" columns="/0/@tables.0/@columns.9" pk_owner="/0/@tables.0"/>
+      <foreignKeys name="fk_Client_Vehicle" refersTo="/0/@tables.2/@keys.0" columns="/0/@tables.0/@columns.0"/>
+      <foreignKeys name="fk_Partner_Vehicle" refersTo="/0/@tables.1/@keys.0" columns="/0/@tables.0/@columns.7"/>
+      <foreignKeys name="fk_recursive_Vehicle" refersTo="/0/@tables.0/@keys.0" columns="/0/@tables.0/@columns.1 /0/@tables.0/@columns.2 /0/@tables.0/@columns.3 /0/@tables.0/@columns.4"/>
+    </tables>
+    <tables name="Partner" primary_key="/0/@tables.1/@keys.0">
+      <columns name="car_quantity" type="Integer"/>
+      <columns name="document_Partner" type="String" foreignKeys="/0/@tables.1/@foreignKeys.0" keys="/0/@tables.1/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Partner" columns="/0/@tables.1/@columns.1" pk_owner="/0/@tables.1"/>
+      <foreignKeys name="fk_Person_Partner" refersTo="/0/@tables.6/@keys.0" columns="/0/@tables.1/@columns.1"/>
+    </tables>
+    <tables name="Client" primary_key="/0/@tables.2/@keys.0">
+      <columns name="document_Client" type="String" foreignKeys="/0/@tables.2/@foreignKeys.0" keys="/0/@tables.2/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Client" columns="/0/@tables.2/@columns.0" pk_owner="/0/@tables.2"/>
+      <foreignKeys name="fk_Person_Client" refersTo="/0/@tables.6/@keys.0" columns="/0/@tables.2/@columns.0"/>
+    </tables>
+    <tables name="Mphones_Person" primary_key="/0/@tables.3/@keys.0">
+      <columns name="document_Mphones_Person" type="String" foreignKeys="/0/@tables.3/@foreignKeys.0" keys="/0/@tables.3/@keys.0"/>
+      <columns name="phones_Mphones_Person" type="String" keys="/0/@tables.3/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Mphones_Person" columns="/0/@tables.3/@columns.0 /0/@tables.3/@columns.1" pk_owner="/0/@tables.3"/>
+      <foreignKeys name="fk_Person_Mphones_Person" refersTo="/0/@tables.6/@keys.0" columns="/0/@tables.3/@columns.0"/>
+    </tables>
+    <tables name="relacion_nn" primary_key="/0/@tables.4/@keys.0">
+      <columns name="attr1" type="String"/>
+      <columns name="attr2" type="String"/>
+      <columns name="patent_relacion_nn" type="String" foreignKeys="/0/@tables.4/@foreignKeys.0" keys="/0/@tables.4/@keys.0"/>
+      <columns name="document_relacion_nn" type="String" foreignKeys="/0/@tables.4/@foreignKeys.1" keys="/0/@tables.4/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_relacion_nn" columns="/0/@tables.4/@columns.2 /0/@tables.4/@columns.3" pk_owner="/0/@tables.4"/>
+      <foreignKeys name="fk_Vehicle_relacion_nn" refersTo="/0/@tables.0/@keys.0" columns="/0/@tables.4/@columns.2"/>
+      <foreignKeys name="fk_Person_relacion_nn" refersTo="/0/@tables.6/@keys.0" columns="/0/@tables.4/@columns.3"/>
+    </tables>
+    <tables name="Mmultival_attr_Person" primary_key="/0/@tables.5/@keys.0">
+      <columns name="multival_attr_Mmultival_attr_Person" type="String" keys="/0/@tables.5/@keys.0"/>
+      <columns name="document_Mmultival_attr_Person" type="String" foreignKeys="/0/@tables.5/@foreignKeys.0" keys="/0/@tables.5/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Mmultival_attr_Person" columns="/0/@tables.5/@columns.0 /0/@tables.5/@columns.1" pk_owner="/0/@tables.5"/>
+      <foreignKeys name="fk_Person_Mmultival_attr_Person" refersTo="/0/@tables.6/@keys.0" columns="/0/@tables.5/@columns.1"/>
+    </tables>
+    <tables name="Person" primary_key="/0/@tables.6/@keys.0">
+      <columns name="attribute_2_Person" type="Double"/>
+      <columns name="att" type="String" foreignKeys="/0/@tables.6/@foreignKeys.0"/>
+      <columns name="attribute_1_Person" type="Double"/>
+      <columns name="address" type="String"/>
+      <columns name="document" type="String" keys="/0/@tables.6/@keys.0"/>
+      <columns name="document_Father" type="String"/>
+      <columns name="att_Father" type="String"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Person" kind="primary_key" columns="/0/@tables.6/@columns.4" pk_owner="/0/@tables.6"/>
+      <foreignKeys name="fk_recursive_Person" refersTo="/0/@tables.6/@keys.0" columns="/0/@tables.6/@columns.1"/>
+    </tables>
+    <tables name="Father2" primary_key="/0/@tables.7/@keys.0">
+      <columns name="document_Client_Father2" type="String" foreignKeys="/1" keys="/0/@tables.7/@keys.0"/>
+      <columns name="document_Client2_Father2" type="String" foreignKeys="/2" keys="/0/@tables.7/@keys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Father2" columns="/0/@tables.7/@columns.0 /0/@tables.7/@columns.1" pk_owner="/0/@tables.7"/>
+    </tables>
+  </simplerdbms:Schema>
+  <simplerdbms:ForeignKey name="fk_Client_Father2" refersTo="/0/@tables.2/@keys.0" columns="/0/@tables.7/@columns.0"/>
+  <simplerdbms:ForeignKey name="fk_Client2_Father2" refersTo="/0/@tables.2/@keys.0" columns="/0/@tables.7/@columns.1"/>
+</xmi:XMI>

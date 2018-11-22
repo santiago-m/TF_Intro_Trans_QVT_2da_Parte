@@ -2,7 +2,7 @@
 <section name="Workbench">
 	<section name="EditorSelectionDialog">
 		<item value="false" key="EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL"/>
-		<item value=".ERModel" key="EditorSelectionDialog.STORE_ID_FILE_EXTENSION"/>
+		<item value=".simplerdbms" key="EditorSelectionDialog.STORE_ID_FILE_EXTENSION"/>
 		<item value="org.eclipse.emf.ecore.presentation.EcoreEditorID" key="EditorSelectionDialog.STORE_ID_DESCR"/>
 	</section>
 	<section name="org.eclipse.ui.internal.QuickAccess">

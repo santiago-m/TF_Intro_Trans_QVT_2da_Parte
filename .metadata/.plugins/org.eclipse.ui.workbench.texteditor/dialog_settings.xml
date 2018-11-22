@@ -2,24 +2,36 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="create_pk_with_columns" key="selection"/>
+		<item value="FOREIGN KEY" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="create_pk_with_columns"/>
-			<item value="attributeToColumn"/>
-			<item value="fk_"/>
+			<item value="foreign key"/>
+			<item value="foreignKeyFromTable"/>
+			<item value="mattributeToColumn"/>
+			<item value="mattributeToColumn("/>
+			<item value="name := self.name + &apos;_&apos; + owner_name"/>
+			<item value="multival_table("/>
+			<item value="map_to_multival_table("/>
+			<item value="multival_tables("/>
+			<item value="sons_has"/>
+			<item value="relation_attributes("/>
+			<item value="foreignKeys"/>
+			<item value="columns"/>
+			<item value="recursive_relations("/>
+			<item value="recursive_relations"/>
+			<item value="decimal"/>
 		</list>
 		<list key="replacehistory">
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="335" key="DIALOG_WIDTH"/>
+		<item value="375" key="DIALOG_WIDTH"/>
 		<item value="1|Noto Sans|9.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="444" key="DIALOG_HEIGHT"/>
-		<item value="1105" key="DIALOG_X_ORIGIN"/>
-		<item value="171" key="DIALOG_Y_ORIGIN"/>
+		<item value="459" key="DIALOG_HEIGHT"/>
+		<item value="41" key="DIALOG_X_ORIGIN"/>
+		<item value="348" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

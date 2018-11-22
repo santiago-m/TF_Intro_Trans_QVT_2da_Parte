@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:simplerdbms="SimpleRDBMS" xsi:schemaLocation="SimpleRDBMS ../metamodelos/SimpleRDBMS.ecore">
+  <simplerdbms:Schema name="alquiler_autos">
+    <tables name="relacion_nn" primary_key="/0/@tables.0/@keys.0">
+      <columns name="patent_relacion_nn" type="String" foreignKeys="/0/@tables.0/@foreignKeys.1" keys="/0/@tables.0/@keys.0"/>
+      <columns name="attr1" type="String"/>
+      <columns name="attr2" type="String"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_relacion_nn" columns="/0/@tables.0/@columns.0" pk_owner="/0/@tables.0"/>
+      <foreignKeys name="fk_Client_relacion_nn" refersTo="/0/@tables.4/@keys.0"/>
+      <foreignKeys name="fk_Vehicle_relacion_nn" refersTo="/0/@tables.7/@keys.0" columns="/0/@tables.0/@columns.0"/>
+    </tables>
+    <tables name="Mphones_Client">
+      <foreignKeys name="fk_Client_Mphones_Client" refersTo="/0/@tables.4/@keys.0"/>
+    </tables>
+    <tables name="Partner" primary_key="/0/@tables.2/@keys.0">
+      <columns name="phones_Partner" type="String"/>
+      <columns name="multival_attr_Partner" type="String"/>
+      <columns name="car_quantity" type="Integer"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Partner" kind="primary_key" pk_owner="/0/@tables.2"/>
+    </tables>
+    <tables name="Father2" primary_key="/0/@tables.3/@keys.0">
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Father2" pk_owner="/0/@tables.3"/>
+      <foreignKeys name="fk_Client_Father2" refersTo="/0/@tables.4/@keys.0"/>
+    </tables>
+    <tables name="Client" primary_key="/0/@tables.4/@keys.0">
+      <columns name="at" type="String" foreignKeys="/0/@tables.4/@foreignKeys.0"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Client" kind="primary_key" pk_owner="/0/@tables.4"/>
+      <foreignKeys name="fk_recursive_Client" refersTo="/0/@tables.4/@keys.0" columns="/0/@tables.4/@columns.0"/>
+    </tables>
+    <tables name="Mphones_Partner" primary_key="/0/@tables.5/@keys.0">
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Mphones_Partner" pk_owner="/0/@tables.5"/>
+      <foreignKeys name="fk_Partner_Mphones_Partner" refersTo="/0/@tables.2/@keys.0"/>
+    </tables>
+    <tables name="Mmultival_attr_Client">
+      <foreignKeys name="fk_Client_Mmultival_attr_Client" refersTo="/0/@tables.4/@keys.0"/>
+    </tables>
+    <tables name="Vehicle" primary_key="/0/@tables.7/@keys.0">
+      <columns name="brand" type="String"/>
+      <columns name="code" type="String" foreignKeys="/0/@tables.7/@foreignKeys.2"/>
+      <columns name="paid_amount" type="Double" foreignKeys="/0/@tables.7/@foreignKeys.2"/>
+      <columns name="date" type="Date" foreignKeys="/0/@tables.7/@foreignKeys.2"/>
+      <columns name="patent" type="String" keys="/0/@tables.7/@keys.0"/>
+      <columns name="kilometers_done" type="Double" foreignKeys="/0/@tables.7/@foreignKeys.2"/>
+      <columns name="model" type="Integer"/>
+      <columns name="kilometers" type="Double"/>
+      <keys xsi:type="simplerdbms:Primary_Key" name="pk_Vehicle" kind="primary_key" columns="/0/@tables.7/@columns.4" pk_owner="/0/@tables.7"/>
+      <foreignKeys name="fk_Partner_Vehicle" refersTo="/0/@tables.2/@keys.0"/>
+      <foreignKeys name="fk_Client_Vehicle" refersTo="/0/@tables.4/@keys.0"/>
+      <foreignKeys name="fk_recursive_Vehicle" refersTo="/0/@tables.7/@keys.0" columns="/0/@tables.7/@columns.1 /0/@tables.7/@columns.2 /0/@tables.7/@columns.3 /0/@tables.7/@columns.5"/>
+    </tables>
+    <tables name="Mmultival_attr_Partner">
+      <foreignKeys name="fk_Partner_Mmultival_attr_Partner" refersTo="/0/@tables.2/@keys.0"/>
+    </tables>
+  </simplerdbms:Schema>
+  <simplerdbms:Column name="multival_attr_Mmultival_attr_Client" type="String"/>
+  <simplerdbms:Column name="multival_attr_Mmultival_attr_Partner" type="String"/>
+  <simplerdbms:Column name="phones_Mphones_Client" type="String"/>
+  <simplerdbms:Column name="phones_Mphones_Partner" type="String"/>
+  <simplerdbms:Column name="phones_Client" type="String"/>
+  <simplerdbms:Column name="multival_attr_Client" type="String"/>
+</xmi:XMI>

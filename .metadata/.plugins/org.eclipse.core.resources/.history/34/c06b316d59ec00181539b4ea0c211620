@@ -1,0 +1,54 @@
+[comment encoding = UTF-8 /]
+[module generate_sql('SimpleRDBMS')]
+
+[template public generateElement(aSchema : Schema)]
+[comment @main/]
+[file (aSchema.name + '.sql', false, 'UTF-8')]
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ [aSchema.name/];
+USE [aSchema.name/];
+set foreign_key_checks=0;
+[for (table : Table | aSchema.tables) separator('\n')]
+[generateTable(aSchema, table)/]
+[/for]
+[/file]
+[/template]
+
+[template public generateTable(aSchema : Schema, aTable : Table)]
+DROP TABLE IF EXISTS `[aTable.name/]`;
+CREATE TABLE `[aTable.name/]` (
+[for (column : Column | aTable.columns) separator('')]
+	[generateColumn(aTable, column)/]
+[/for]
+[for (fk : ForeignKey | aTable.foreignKeys) separator('')]
+	[generateFK(aTable, fk)/],
+[/for]
+[for (key : Key | aTable.keys -> excluding(aTable.primary_key)) separator('')]
+	[generateSecKey(aTable, key)/],
+[/for]
+PRIMARY KEY ([for (column : Column | aTable.primary_key.columns) separator(', ')]`[column.name/]`[/for])
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+[/template]
+
+[template public generateColumn(aTable : Table, aColumn : Column)]
+`[aColumn.name/]` [if (aColumn.type = 'Integer')]int(25)[else][if (aColumn.type = 'String')]varchar(25)[else][if (aColumn.type = 'Double')]decimal(10, 2)[else][if (aColumn.type = 'Date')]datetime[/if][/if][/if][/if],
+[/template]
+
+[template public generateFK(aTable : Table, aFK : ForeignKey)]
+FOREIGN KEY (
+[for (c : Column | aFK.columns) separator(', \n\t')]
+ `[c.name/]`
+[/for]
+) REFERENCES [aFK.refersTo.k_owner.name/](
+[for (c : Column | aFK.refersTo.columns) separator(', \n\t')]
+[c.name/]
+[/for]
+)
+[/template]
+
+[template public generateSecKey(aTable : Table, aKey : Key)]
+UNIQUE (
+[for (c : Column | aKey.columns) separator(', \n\t')]
+[c.name/]
+[/for]
+)
+[/template]

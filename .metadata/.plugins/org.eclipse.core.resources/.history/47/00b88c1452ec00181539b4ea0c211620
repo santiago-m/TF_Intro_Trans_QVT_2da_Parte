@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ermodel:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ermodel="ERModel" xsi:schemaLocation="ERModel ../metamodelos/ERModel.ecore" name="rent_a_car">
+  <elements xsi:type="ermodel:Entity" name="Person" primary_key="//@elements.0/@keys.0">
+    <attributes name="document" type="//@elements.5"/>
+    <attributes name="address" type="//@elements.5"/>
+    <attributes xsi:type="ermodel:Multival_attribute" name="phones" type="//@elements.5"/>
+    <keys xsi:type="ermodel:Primary_Key" name="pk_persona" attribute_set="//@elements.0/@attributes.0" pk_owner="//@elements.0"/>
+  </elements>
+  <elements xsi:type="ermodel:Entity" name="Client" parent="//@elements.0"/>
+  <elements xsi:type="ermodel:Entity" name="Partner" parent="//@elements.0">
+    <attributes name="car_quantity" type="//@elements.7"/>
+  </elements>
+  <elements xsi:type="ermodel:Entity" name="Vehicle" primary_key="//@elements.3/@keys.0">
+    <attributes name="patent" type="//@elements.5"/>
+    <attributes name="kilometers" type="//@elements.6"/>
+    <attributes name="brand" type="//@elements.5"/>
+    <attributes name="model" type="//@elements.7"/>
+    <keys xsi:type="ermodel:Primary_Key" name="vehiculo_pk" attribute_set="//@elements.3/@attributes.0" pk_owner="//@elements.3"/>
+  </elements>
+  <elements xsi:type="ermodel:Entity" name="Rent">
+    <attributes name="rent_code" type="//@elements.5"/>
+    <attributes name="date" type="//@elements.8"/>
+  </elements>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="String" typeOpposite="//@elements.3/@attributes.0 //@elements.0/@attributes.0 //@elements.0/@attributes.1 //@elements.0/@attributes.2 //@elements.3/@attributes.2 //@elements.4/@attributes.0"/>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="Double" typeOpposite="//@elements.3/@attributes.1"/>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="Integer" typeOpposite="//@elements.3/@attributes.3 //@elements.2/@attributes.0"/>
+  <elements xsi:type="ermodel:PrimitiveDataType" name="Date" typeOpposite="//@elements.4/@attributes.1"/>
+</ermodel:Package>
