@@ -74,7 +74,7 @@ mapping ERM::Entity::persistentEntityToTable() : RDB::Table
 			if (not self.parent.existTable(dependencie_tables)) {
 				let derived_columns : Set(RDB::Column) = self.get_untabulated_parents_attributes() 
 					-> select(a : ERM::Attribute | not a.oclIsKindOf(ERM::Multival_attribute))
-					-> derivedAttributeToColumn(self.name) 
+					-> derivedAttributeToColumn() 
 				in do {
 					columns := derived_columns
 						-> asSet()
@@ -139,17 +139,19 @@ mapping ERM::Relation::relation_n_to_n_ToTable() : RDB::Table
 				-> select(t : RDB::Table | t.name = self.entity_2.name) 
 				-> any(true)
 		in do {
-			let foreign_columns : Sequence(RDB::Column) = t1.primary_key.columns
-								-> map create_derived_columns(self.name, false)
-								-> asBag()
-								-> union(
+			let foreign_columns_t1 : Sequence(RDB::Column) = 
+								
+								t1.primary_key.columns
+								-> map create_derived_columns(t1.name, false)
+								-> asSequence(),
+				foreign_columns_t2 : Sequence(RDB::Column) = 
+								
 									t2.primary_key.columns
-									-> map create_derived_columns(self.name, t1 = t2)
-									->asBag()
-								)  
-								 
+									-> map create_derived_columns(t2.name, t1 = t2)
+									-> asSequence()
 			in do {
-				keys := foreign_columns -> map create_pk_with_columns();
+				keys := foreign_columns_t1 -> union(foreign_columns_t2)
+							-> map create_pk_with_columns();
 				primary_key := keys 
 								-> selectByKind(RDB::Primary_Key) 
 								-> any(true);
@@ -158,21 +160,28 @@ mapping ERM::Relation::relation_n_to_n_ToTable() : RDB::Table
 							-> map attributeToColumn('') 
 							-> sortedBy(name) 
 							-> union(
-								foreign_columns
-							   );
+								foreign_columns_t1
+							   )
+							-> union(
+								foreign_columns_t2
+							);
 				if (t1 = t2) {
-					let tuple : Tuple(first : RDB::ForeignKey, second : RDB::ForeignKey) = t1.foreignKeyTupleFromTable(self.name, foreign_columns) in do {
+					let tuple : Tuple(first : RDB::ForeignKey, second : RDB::ForeignKey) = t1.foreignKeyTupleFromTable(self.name, foreign_columns_t1 -> union (foreign_columns_t2)) in do {
 						foreignKeys := tuple.first.oclAsSet() -> including(tuple.second); 
 					};
 				}
 				else {
-					foreignKeys := t1.oclAsSet() 
-							-> including(t2) 
-							-> map foreignKeyFromTable(self.name, foreign_columns);	
+					foreignKeys := t1.map foreignKeyFromTable(self.name, foreign_columns_t1)
+									-> asSequence()
+								-> union (
+									t2.map foreignKeyFromTable(self.name, foreign_columns_t2)
+									-> asSequence()
+								)
 				};
 				
 				if (primary_key = null) {
-					let new_pk : RDB::Primary_Key = foreign_columns 
+					let new_pk : RDB::Primary_Key = 
+							foreign_columns_t1 -> union (foreign_columns_t2) 
 							-> map create_pkey_from_with_columns() 
 					in do { 
 						keys := keys 
@@ -190,10 +199,10 @@ mapping ERM::Relation::relation_n_to_n_ToTable() : RDB::Table
 */
 mapping ERM::Entity::multival_table(m : ERM::Multival_attribute, schema : RDB::Schema) : RDB::Table {
 	name := 'M' + m.name + '_' + self.name;
-	columns := m.map mattributeToColumn(name, result); 
+	columns := m.map mattributeToColumn(self.name, result); 
 	let self_pk : ERM::Primary_Key = self.get_pk() in
 		let foreign_key_columns : Set(RDB::Column) = self_pk.attribute_set
-														-> map mattributeToColumn(name, result)
+														-> map mattributeToColumn(self.name, result)
 														-> asSet()
 		in do {
 			columns := columns
@@ -213,12 +222,7 @@ mapping ERM::Entity::multival_table(m : ERM::Multival_attribute, schema : RDB::S
  * Its specific to create Multivaluable Attribute Tables.-
 */
 mapping ERM::Attribute::mattributeToColumn(owner_name : String, o : RDB::Table) : RDB::Column {
-	if (self.name.matches('(?i).*' + self.eowner.name + '.*')) {
-		name := self.name + '_' + owner_name;	
-	}
-	else {
-		name := self.name + '_' + self.eowner.name + '_' + owner_name;
-	};
+	name := self.name + '_' + owner_name;
 	type := self.type.name;
 	owner := o;
 }
@@ -242,16 +246,18 @@ mapping ERM::Primary_Key::entityPKToTablePK() : RDB::Primary_Key {
 */
 mapping RDB::Column::create_derived_columns(owner_name : String, duplicate_columns : Boolean) : RDB::Column {
 	if (duplicate_columns) { 
-		name := self.name + '2_';
+		name := self.name + '2';
 	}
 	else {
-		name := self.name + '_';
+		name := self.name;
 	};
-	if (self.name.matches('(?i).*' + self.owner.name + '.*')) {
-		name := name + owner_name;	
+	if (owner_name.equalsIgnoreCase('')) {
+		name := name + '_' + self.owner.name;	
 	}
 	else {
-		name := name + self.owner.name + '_' + owner_name;
+		if (name.indexOf(owner_name) = 0) {
+			name := name + '_' + owner_name;	
+		}
 	};
 	type := self.type;
 }
@@ -269,8 +275,8 @@ mapping ERM::Attribute::attributeToColumn(suffix : String) : RDB::Column {
  * This mapping produces an RDB Column object from an ERModel Attribute object.
  * But this new column belongs to a Table different of its owner entity transformation
 */
-mapping ERM::Attribute::derivedAttributeToColumn(new_owner_name : String) : RDB::Column {
-	name := self.eowner.name + '_' + self.name + '_' + new_owner_name;
+mapping ERM::Attribute::derivedAttributeToColumn() : RDB::Column {
+	name := self.eowner.name + '_' + self.name;
 	kind := self.kind;
 	type := self.type.name;
 }
@@ -287,11 +293,11 @@ mapping RDB::Table::foreignKeyFromTable(owner_name : String, cols : Sequence(RDB
 	let columns_first_fk : Set(RDB::Column) = cols -> select(c1 : RDB::Column | 
 									self.columns 
 										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('_' + owner_name))),
+										-> includes(c1.name)),
 		columns_second_fk : Set(RDB::Column) = cols -> select(c1 : RDB::Column | 
 									self.columns 
 										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('2_' + owner_name)))
+										-> includes(c1.name.substringBefore('2')))
 	in do {
 		if (columns_first_fk -> notEmpty()) {
 			name := 'fk_' + self.name + '_' + owner_name;
@@ -324,11 +330,11 @@ query RDB::Table::foreignKeyTupleFromTable(owner_name : String, cols : Sequence(
 	let columns_first_fk : Sequence(RDB::Column) = cols -> select(c1 : RDB::Column | 
 									self.columns 
 										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('_' + owner_name))),
+										-> includes(c1.name)),
 		columns_second_fk : Sequence(RDB::Column) = cols -> select(c1 : RDB::Column | 
 									self.columns 
 										-> collect(c2 : RDB::Column | c2.name) 
-										-> includes(c1.name.substringBefore('2_' + owner_name)))
+										-> includes(c1.name.substringBefore('2')))
 	in do {
 		let res : Tuple(first : RDB::ForeignKey, second : RDB::ForeignKey) = 
 			Tuple{
@@ -401,9 +407,9 @@ query ERM::Entity::relation_attributes() : Set(ERM::Attribute) {
 
 query ERM::Relation::recursive_relation_to_column() : Set(RDB::Column) {
 	return self.entity_1.primary_key.attribute_set 
-				-> map attributeToColumn('_' + self.name)
+				-> map attributeToColumn('_' + self.entity_1.name)
 				-> union(
-					self.attributes -> attributeToColumn('_' + self.name)
+					self.attributes -> attributeToColumn('')
 				)
 				-> asSet()
 }

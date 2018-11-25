@@ -33,7 +33,6 @@ INDEX VERSION 1.131+/home/santiago/qvt-workspace/Trabajo_Final/.metadata/.plugin
 2841451250.index
 3252297568.index
 4196814565.index
-576884634.index
 1006809431.index
 3176686865.index
 689462254.index
