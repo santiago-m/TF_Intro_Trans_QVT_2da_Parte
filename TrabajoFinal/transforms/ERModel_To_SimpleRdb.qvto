@@ -213,7 +213,12 @@ mapping ERM::Entity::multival_table(m : ERM::Multival_attribute, schema : RDB::S
  * Its specific to create Multivaluable Attribute Tables.-
 */
 mapping ERM::Attribute::mattributeToColumn(owner_name : String, o : RDB::Table) : RDB::Column {
-	name := self.name + '_' + owner_name;
+	if (self.name.matches('(?i).*' + self.eowner.name + '.*')) {
+		name := self.name + '_' + owner_name;	
+	}
+	else {
+		name := self.name + '_' + self.eowner.name + '_' + owner_name;
+	};
 	type := self.type.name;
 	owner := o;
 }
@@ -237,10 +242,16 @@ mapping ERM::Primary_Key::entityPKToTablePK() : RDB::Primary_Key {
 */
 mapping RDB::Column::create_derived_columns(owner_name : String, duplicate_columns : Boolean) : RDB::Column {
 	if (duplicate_columns) { 
-		name := self.name + '2_' + owner_name;
+		name := self.name + '2_';
 	}
 	else {
-		name := self.name + '_' + owner_name;
+		name := self.name + '_';
+	};
+	if (self.name.matches('(?i).*' + self.owner.name + '.*')) {
+		name := name + owner_name;	
+	}
+	else {
+		name := name + self.owner.name + '_' + owner_name;
 	};
 	type := self.type;
 }
@@ -259,7 +270,7 @@ mapping ERM::Attribute::attributeToColumn(suffix : String) : RDB::Column {
  * But this new column belongs to a Table different of its owner entity transformation
 */
 mapping ERM::Attribute::derivedAttributeToColumn(new_owner_name : String) : RDB::Column {
-	name := self.name + '_' + new_owner_name;
+	name := self.eowner.name + '_' + self.name + '_' + new_owner_name;
 	kind := self.kind;
 	type := self.type.name;
 }

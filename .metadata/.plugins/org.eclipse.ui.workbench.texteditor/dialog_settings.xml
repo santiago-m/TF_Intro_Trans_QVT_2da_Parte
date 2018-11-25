@@ -2,12 +2,17 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="FOREIGN KEY" key="selection"/>
+		<item value=": RDB::Column {" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value=": RDB::Column {"/>
+			<item value=": RDB::Column"/>
+			<item value="+ owner_name"/>
+			<item value="owner_name"/>
+			<item value="owner"/>
 			<item value="foreign key"/>
 			<item value="foreignKeyFromTable"/>
 			<item value="mattributeToColumn"/>
@@ -18,11 +23,6 @@
 			<item value="multival_tables("/>
 			<item value="sons_has"/>
 			<item value="relation_attributes("/>
-			<item value="foreignKeys"/>
-			<item value="columns"/>
-			<item value="recursive_relations("/>
-			<item value="recursive_relations"/>
-			<item value="decimal"/>
 		</list>
 		<list key="replacehistory">
 		</list>
