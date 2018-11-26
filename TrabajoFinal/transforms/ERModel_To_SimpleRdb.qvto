@@ -1,5 +1,5 @@
  modeltype ERM uses 'ERModel';
- modeltype RDB uses 'SimpleRDBMS';
+ modeltype RDB uses 'https://SimpleRDBMS';
 
 transformation ERModel_To_SimpleRdb(in erm : ERM, out RDB);
 
