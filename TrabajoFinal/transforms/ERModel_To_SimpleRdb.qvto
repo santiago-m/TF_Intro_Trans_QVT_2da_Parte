@@ -74,17 +74,18 @@ mapping ERM::Entity::persistentEntityToTable() : RDB::Table
 			if (not self.parent.existTable(dependencie_tables)) {
 				let derived_columns : Set(RDB::Column) = self.get_untabulated_parents_attributes() 
 					-> select(a : ERM::Attribute | not a.oclIsKindOf(ERM::Multival_attribute))
-					-> derivedAttributeToColumn() 
+					-> map derivedAttributeToColumn(self.name) 
 				in do {
 					columns := derived_columns
-						-> asSet()
 						-> union(
 							columns);
 					if (primary_key = null) {
 						primary_key := derived_columns 
 										-> select(c : RDB::Column | self.parent.primary_key.attribute_set 
-														-> collect(a : ERM::Attribute | a.name)
-												   		-> includes(c.name.substringBefore('_'+self.name))
+														-> collect(a : ERM::Attribute | a.eowner.name + 's_' + a.name)
+												   		-> includes(c.name
+												   						.substringBefore('_in_' + c.owner.name)
+												   					)
 												  ) -> map pk_from_derived_columns(self.name);
 						primary_key.k_owner := primary_key.pk_owner;
 					}
@@ -275,8 +276,8 @@ mapping ERM::Attribute::attributeToColumn(suffix : String) : RDB::Column {
  * This mapping produces an RDB Column object from an ERModel Attribute object.
  * But this new column belongs to a Table different of its owner entity transformation
 */
-mapping ERM::Attribute::derivedAttributeToColumn() : RDB::Column {
-	name := self.eowner.name + '_' + self.name;
+mapping ERM::Attribute::derivedAttributeToColumn(new_owner_name : String) : RDB::Column {
+	name := self.eowner.name + 's_' + self.name + '_in_' + new_owner_name;
 	kind := self.kind;
 	type := self.type.name;
 }
